@@ -15,19 +15,12 @@ public class Apllication {
 			
 			CompanyMap.getMap();// 회사 정보(최초)
 			
-				
-			
 			resultMap.checkKeyword();
 
-			
 			MainView mainView = new MainView();
 			mainView.mainView();
 			
-			getStockInfoCalculate test = new getStockInfoCalculate ();
 			
-			test.getStockCalculate();
-			
-			System.out.println(test.StockPrices.get(0).getPreviousDay());
 			
 		} catch (Exception e) {
 

@@ -9,8 +9,8 @@ import MemberClass.StockPriceToday;
 
 public class getStockInfoCalculate { // Stock
 
-	public ArrayList<StockMarketPrice> StockPrices = new ArrayList<StockMarketPrice>();
-	public ArrayList<StockIndex> StockIndex = new ArrayList<StockIndex>();
+	public ArrayList<StockMarketPrice> StockPrices = new ArrayList<StockMarketPrice>(); //어제꺼
+	public ArrayList<StockIndex> StockIndex = new ArrayList<StockIndex>(); // StockIndex
 	public ArrayList<StockPriceToday> StockPriceToday = new ArrayList<StockPriceToday>();
 
 	public void getStockCalculate() {
@@ -43,6 +43,9 @@ public class getStockInfoCalculate { // Stock
 				scText = scText.substring(0, lastIndex);
 				lastIndex = scText.lastIndexOf(" ");
 				scText = scText.substring(0, lastIndex);
+				if(scText.equalsIgnoreCase("보합")) {
+			    	  scText = "변동없음";
+			      }
 				stockPrice.setPreviousDay(scText);// 전일 대비
 
 				startIndex = text.indexOf("전일대비") + 5;
@@ -65,24 +68,27 @@ public class getStockInfoCalculate { // Stock
 				scText = text.substring(startIndex);
 				lastIndex = scText.indexOf(" ");
 				scText = scText.substring(0, lastIndex);
+				if(scText.equalsIgnoreCase("원주가")) {
+			    	  scText = "변동없음";
+			      }
 				stockPrice.setWeekMinimum(scText);// 주 최저
 
 				startIndex = text.indexOf("매매단위") + 5;
 				scText = text.substring(startIndex);
 				lastIndex = scText.indexOf(" ");
-				scText = scText.substring(0, lastIndex);
+				scText = scText.substring(0, lastIndex-1);
 				stockPrice.setFaceValue(scText);// 액면가
 
 				startIndex = text.indexOf("시가총액 시가총액") + 10;
 				scText = text.substring(startIndex);
 				lastIndex = scText.indexOf("시가총액순위");
-				scText = scText.substring(0, lastIndex);
+				scText = scText.substring(0, lastIndex-1);
 				stockPrice.setMarketCapitalization(scText);// 시가총액
 
 				startIndex = text.indexOf("상장주식수") + 6;
 				scText = text.substring(startIndex);
 				lastIndex = scText.indexOf(" ");
-				scText = scText.substring(0, lastIndex);
+				scText = scText.substring(0, lastIndex)+"주";
 				stockPrice.setMakeStockScore(scText);// 발행 주식 수(상장 주식 수)
 
 				StockPrices.add(stockPrice);
@@ -97,11 +103,11 @@ public class getStockInfoCalculate { // Stock
 
 		lastIndex = text.indexOf("추정PERlEPS") - 1;
 		startIndex = (text.substring(0, text.indexOf("추정PERlEPS") - 1)).lastIndexOf(" ") + 1;
-		stocIndex.setEps(text.substring(startIndex, lastIndex));
+		stocIndex.setEps(text.substring(startIndex, lastIndex-1));
 
 		lastIndex = text.indexOf("배당수익률") - 1;
 		startIndex = text.substring(0, lastIndex).lastIndexOf(" ") + 1;
-		stocIndex.setBps(text.substring(startIndex, lastIndex));
+		stocIndex.setBps(text.substring(startIndex, lastIndex-1));
 
 		lastIndex = 0;
 		startIndex = text.lastIndexOf("PER") + 4;
@@ -127,90 +133,99 @@ public class getStockInfoCalculate { // Stock
 
 	private void addStockPriceToday(String text, String company) {
 
-		StockPriceToday stockPriceToday = new StockPriceToday();
-		int startIndex = 0;
-		int lastIndex = 0;
-		String scText = "";
+	      StockPriceToday stockPriceToday = new StockPriceToday();
+	      int startIndex = 0;
+	      int lastIndex = 0;
+	      String scText = "";
+	      
+	      stockPriceToday.setCompanyName(company);//TODO 회사 이름 입력
 
-		startIndex = text.indexOf("오늘의시세") + 6;// 주가
-		scText = text.substring(startIndex);
-		lastIndex = scText.indexOf("포인트") - 1;
-		scText = scText.substring(0, lastIndex);
-		stockPriceToday.setStockPrice(scText);
+	      startIndex = text.indexOf("오늘의시세") + 6;// 주가
+	      scText = text.substring(startIndex);
+	      lastIndex = scText.indexOf("포인트") - 1;
+	      scText = scText.substring(0, lastIndex);
+	      stockPriceToday.setStockPrice(scText);
 
-		startIndex = text.indexOf("시가") + 3;// 시가
-		scText = text.substring(startIndex);
-		lastIndex = scText.indexOf("고가") - 1;
-		scText = scText.substring(0, lastIndex);
-		stockPriceToday.setMarketPrice(scText);
+	      startIndex = text.indexOf("시가") + 3;// 시가
+	      scText = text.substring(startIndex);
+	      lastIndex = scText.indexOf("고가") - 1;
+	      scText = scText.substring(0, lastIndex);
+	      stockPriceToday.setMarketPrice(scText);
 
-		startIndex = text.indexOf("전일가") + 4;// 전일가
-		scText = text.substring(startIndex);
-		lastIndex = scText.indexOf("시가") - 1;
-		scText = scText.substring(0, lastIndex);
-		stockPriceToday.setYesterdayPrice(scText);
+	      startIndex = text.indexOf("전일가") + 4;// 전일가
+	      scText = text.substring(startIndex);
+	      lastIndex = scText.indexOf("시가") - 1;
+	      scText = scText.substring(0, lastIndex);
+	      stockPriceToday.setYesterdayPrice(scText);
 
-		lastIndex = text.indexOf("전일가") - 1; // 전일대비 수익률(%)
-		startIndex = text.indexOf("전일대비") + 5;
-		scText = text.substring(startIndex, lastIndex);
-		startIndex = scText.indexOf(" ") + 1;
-		scText = scText.substring(startIndex);
-		startIndex = scText.indexOf(" ") + 1;
-		scText = scText.substring(startIndex);
-		startIndex = scText.indexOf(" ") + 1;
-		scText = scText.substring(startIndex);
-		stockPriceToday.setRateYesterday(scText);
+	      lastIndex = text.indexOf("전일가") - 1; // 전일대비 수익률(%)
+	      startIndex = text.indexOf("전일대비") + 5;
+	      scText = text.substring(startIndex, lastIndex);
+	      startIndex = scText.indexOf(" ") + 1;
+	      scText = scText.substring(startIndex);
+	      startIndex = scText.indexOf(" ") + 1;
+	      scText = scText.substring(startIndex);
+	      startIndex = scText.indexOf(" ") + 1;
+	      scText = scText.substring(startIndex);
+	      if(scText.equalsIgnoreCase("퍼센트")) {
+	    	  scText = "변동없음";
+	      }
+	      stockPriceToday.setRateYesterday(scText);
 
-		startIndex = text.indexOf("전일대비 ") + 5;// 전일대비 수익(변동)가
-		scText = text.substring(startIndex);
-		lastIndex = scText.indexOf("전일가");
-		scText = scText.substring(0, lastIndex);
-		lastIndex = scText.lastIndexOf(" ");
-		scText = scText.substring(0, lastIndex);
-		lastIndex = scText.lastIndexOf(" ");
-		scText = scText.substring(0, lastIndex);
-		lastIndex = scText.lastIndexOf(" ");
-		scText = scText.substring(0, lastIndex);
-		lastIndex = scText.lastIndexOf(" ");
-		scText = scText.substring(0, lastIndex);
+	      startIndex = text.indexOf("전일대비 ") + 5;// 전일대비 수익(변동)가
+	      scText = text.substring(startIndex);
+	      lastIndex = scText.indexOf("전일가");
+	      scText = scText.substring(0, lastIndex);
+	      lastIndex = scText.lastIndexOf(" ");
+	      scText = scText.substring(0, lastIndex);
+	      lastIndex = scText.lastIndexOf(" ");
+	      scText = scText.substring(0, lastIndex);
+	      lastIndex = scText.lastIndexOf(" ");
+	      scText = scText.substring(0, lastIndex);
+	      lastIndex = scText.lastIndexOf(" ");
+	      scText = scText.substring(0, lastIndex);
+	      if(scText.equalsIgnoreCase("보합")) {
+	    	  scText = "변동없음";
+	      }
+	      stockPriceToday.setPreviousday(scText);//TODO set 추가
 
-		startIndex = text.indexOf("거래량 ") + 4;// 거래량
-		scText = text.substring(startIndex);
-		lastIndex = scText.indexOf(" ");
-		scText = scText.substring(0, lastIndex);
+	      startIndex = text.indexOf("거래량 ") + 4;// 거래량
+	      scText = text.substring(startIndex);
+	      lastIndex = scText.indexOf(" ");
+	      scText = scText.substring(0, lastIndex);
+	      stockPriceToday.setTradingVolume(scText);//TODO set 추가
 
-		startIndex = text.indexOf("거래대금 ") + 6;// 거래대금
-		scText = text.substring(startIndex);
-		lastIndex = scText.indexOf(" ");
-		scText = scText.substring(0, lastIndex);
-		stockPriceToday.setTradingValue(scText);
+	      startIndex = text.indexOf("거래대금 ") + 5;// 거래대금
+	      scText = text.substring(startIndex);
+	      lastIndex = scText.indexOf(" ");
+	      scText = scText.substring(0, lastIndex);
+	      stockPriceToday.setTradingValue(scText);
 
-		startIndex = text.indexOf("고가 ") + 3;// 고가
-		scText = text.substring(startIndex);
-		lastIndex = scText.indexOf(" ");
-		scText = scText.substring(0, lastIndex);
-		stockPriceToday.setHighPrice(scText);
+	      startIndex = text.indexOf("고가 ") + 3;// 고가
+	      scText = text.substring(startIndex);
+	      lastIndex = scText.indexOf(" ");
+	      scText = scText.substring(0, lastIndex);
+	      stockPriceToday.setHighPrice(scText);
 
-		startIndex = text.indexOf("저가 ") + 3;// 저가
-		scText = text.substring(startIndex);
-		lastIndex = scText.indexOf(" ");
-		scText = scText.substring(0, lastIndex);
-		stockPriceToday.setLowPrice(scText);
+	      startIndex = text.indexOf("저가 ") + 3;// 저가
+	      scText = text.substring(startIndex);
+	      lastIndex = scText.indexOf(" ");
+	      scText = scText.substring(0, lastIndex);
+	      stockPriceToday.setLowPrice(scText);
 
-		startIndex = text.indexOf("상한가 ") + 4;// 최고 상한가(이 주식의 가장 고점)
-		scText = text.substring(startIndex);
-		lastIndex = scText.indexOf(" ");
-		scText = scText.substring(0, lastIndex);
-		stockPriceToday.setMaximumPrice(scText);
+	      startIndex = text.indexOf("상한가 ") + 4;// 최고 상한가(이 주식의 가장 고점)
+	      scText = text.substring(startIndex);
+	      lastIndex = scText.indexOf(" ");
+	      scText = scText.substring(0, lastIndex);
+	      stockPriceToday.setMaximumPrice(scText);
 
-		startIndex = text.indexOf("하한가 ") + 4;// 최저 하한가(이 주식의 가장 저점)
-		scText = text.substring(startIndex);
-		lastIndex = scText.indexOf(" ");
-		scText = scText.substring(0, lastIndex);
-		stockPriceToday.setMinimumPrice(scText);
+	      startIndex = text.indexOf("하한가 ") + 4;// 최저 하한가(이 주식의 가장 저점)
+	      scText = text.substring(startIndex);
+	      lastIndex = scText.indexOf(" ");
+	      scText = scText.substring(0, lastIndex);
+	      stockPriceToday.setMinimumPrice(scText);
 
-		StockPriceToday.add(stockPriceToday);
-
-	}
+	      StockPriceToday.add(stockPriceToday);
+	   }
 
 }
