@@ -147,7 +147,7 @@ public class MainView {
                   ,checkLength(22,data.getBusinessPer())
                   ,checkLength(16,data.getPbr())
                   ));
-         });
+         }); 
          printLine();
          lastLine("     |                                                               [ 0 ]  뒤로가기");
          printLine();
