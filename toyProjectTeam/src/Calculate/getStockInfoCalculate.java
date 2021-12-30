@@ -22,9 +22,10 @@ public class getStockInfoCalculate { // Stock
          } else {
             String text = Crolling.StockCrolling.getStocData(company); // 크롤링한것을 하나의 변수에 담는다.
             StockMarketPrice stockPrice = new StockMarketPrice();
-
+            
+            
             addStockIndex(text, company);// StockIndex를 추가해준다.
-            addStockPriceToday(text, company);// StockPrice(현재가)를 추가해준다.
+        	addStockPriceToday(text, company);// StockPrice(현재가)를 추가해준다.
 
             stockPrice.setName(company);// 회사이름
 
@@ -100,15 +101,22 @@ public class getStockInfoCalculate { // Stock
       StockIndex stocIndex = new StockIndex();
       int startIndex = 0;
       int lastIndex = 0;
-
+      
       lastIndex = text.indexOf("추정PERlEPS") - 1;
       startIndex = (text.substring(0, text.indexOf("추정PERlEPS") - 1)).lastIndexOf(" ") + 1;
-      stocIndex.setEps(text.substring(startIndex, lastIndex-1));
+      if(text.substring(startIndex, lastIndex-1).equals("N/")) {
+    	  stocIndex.setEps("데이터 없음");
+      }else {
+    	  stocIndex.setEps(text.substring(startIndex, lastIndex-1));    	  
+      }
 
       lastIndex = text.indexOf("배당수익률") - 1;
       startIndex = text.substring(0, lastIndex).lastIndexOf(" ") + 1;
-      stocIndex.setBps(text.substring(startIndex, lastIndex-1));
-
+      if(text.substring(startIndex, lastIndex-1).equals("N/")) {
+    	  stocIndex.setBps("데이터 없음");
+      }else {
+    	  stocIndex.setBps(text.substring(startIndex, lastIndex-1));
+      }
       lastIndex = 0;
       startIndex = text.lastIndexOf("PER") + 4;
       stocIndex.setPer(text.substring(text.lastIndexOf("PER") + 4).substring(0,
@@ -118,14 +126,17 @@ public class getStockInfoCalculate { // Stock
       startIndex = text.lastIndexOf("동일업종 PER") + 9;
       stocIndex.setBusinessPer((text.substring(text.lastIndexOf("동일업종 PER") + 9)).substring(0,
             (text.substring(text.lastIndexOf("동일업종 PER") + 9)).indexOf(" ")));
-
+     
       lastIndex = 0;
       startIndex = text.indexOf("현재가") + 4;
-      stocIndex.setPbr(String.format("%.2f",
-            (Double.parseDouble(text.substring(text.indexOf("현재가") + 4)
-                  .substring(0, (text.substring(text.indexOf("현재가") + 4).indexOf(" "))).replaceAll(",", "")))
-                  / (Double.parseDouble(stocIndex.getBps().replaceAll("[, 원]", "")))));
-
+      if(!stocIndex.getBps().equals("데이터 없음")) {
+	      stocIndex.setPbr(String.format("%.2f",
+	            (Double.parseDouble(text.substring(text.indexOf("현재가") + 4)
+	                  .substring(0, (text.substring(text.indexOf("현재가") + 4).indexOf(" "))).replaceAll(",", "")))
+	                  / (Double.parseDouble(stocIndex.getBps().replaceAll("[, 원]", "")))));
+      }else {
+    	  stocIndex.setPbr("데이터 없음");
+      }
       stocIndex.setName(companyName);
 
       StockIndex.add(stocIndex);
