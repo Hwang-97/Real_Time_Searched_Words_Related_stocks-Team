@@ -4,13 +4,15 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.HashMap;
 
+
 public class CompanyMap {
 
 	public static HashMap<String,Integer> map;
 	
 	public static void getMap() {
-		String path = ".\\신규상장기업현황.txt";
-		
+//		String path = ".\\신규상장기업현황.txt";
+		String path = CompanyMap.class.getClassLoader().getResource("stockList.txt").toString().replace("file:/", "");
+		// 테스트용 추가
 		map = new HashMap<String,Integer>();
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(path));
